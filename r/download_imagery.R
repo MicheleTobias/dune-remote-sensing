@@ -1,6 +1,15 @@
-# Download S2 data for 10 Mile Dunes
+# GOAL: Download S2 data for sites
+
+# References:
 # https://documentation.dataspace.copernicus.eu/APIs/openEO/R_Client/R.html
+
+
+# Set Up ------------------------------------------------------------------
+
+# Libraries
 library(openeo)
+
+# Connection
 connection = connect(host = "https://openeo.dataspace.copernicus.eu")
 
 s2 = describe_collection("SENTINEL2_L2A") # or use the collection entry from the list, e.g. collections$`COPERNICUS/S2`
@@ -12,10 +21,23 @@ login()
 
 
 
-spatial_extent = list(west = -123.81261588386191, 
+# Bounding Boxes
+
+#   10 Mile Dunes
+spatial_extent_10Mile = list(west = -123.81261588386191, 
                       south = 39.4826995752253, 
                       east = -123.74737371621065, 
                       north = 39.55675601496341)
+
+#   Coal Oil Point Reserve (COPR)
+spatial_extent_COPR = list(west = -119.940191145, 
+                             south = 34.3987227855, 
+                             east = -119.82824344, 
+                             north = 34.4863293689)
+
+
+# Download Data -----------------------------------------------------------
+
 id = "SENTINEL2_L2A"
 bands = c("B01","B02","B03","B04","B05","B06","B07")
 temporal_extent = c("2018-09-09", "2018-09-11")

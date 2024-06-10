@@ -1,5 +1,7 @@
 # GOAL: Download S2 data for sites
 
+# NOTE: Planet Imagery was downloaded from their online Planet Explorer interface
+
 # References:
 # https://documentation.dataspace.copernicus.eu/APIs/openEO/R_Client/R.html
 

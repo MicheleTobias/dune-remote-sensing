@@ -41,7 +41,7 @@ spatial_extent_COPR = list(west = -119.940191145,
 id = "SENTINEL2_L2A"
 bands = c("B01","B02","B03","B04","B05","B06","B07")
 #temporal_extent_10Mile = c("2018-09-09", "2018-09-11")
-temporal_extent_COPR = c("2018-07-14", "2018-07-15")
+temporal_extent_COPR = c("2018-07-14", "2018-07-14") #matches the date of the Lidar flight from the USGS Wildfire flight
 
 p = processes()
 
@@ -49,8 +49,8 @@ datacube = p$load_collection(
   id = id,
   spatial_extent = spatial_extent_COPR,
   temporal_extent = temporal_extent_COPR,
-  bands = bands,
-  max_cloud_cover=30
+  bands = bands #,
+  #max_cloud_cover=30
 )
 
 f = list_file_formats()
@@ -58,4 +58,4 @@ f = list_file_formats()
 # TODO: make a reduce function to get the 1st time slice
 # since we know there is only 1 we'll just compute the cube and save it
 res <- p$save_result(datacube, format = f$output$GTiff)
-file  <- compute_result(res, output_file = "s2-2018-09-10.tif")
+file  <- compute_result(res, output_file = "./data/imagery/s2-2018-07-14.tif")

@@ -24,10 +24,10 @@ login()
 # Bounding Boxes
 
 #   10 Mile Dunes
-spatial_extent_10Mile = list(west = -123.81261588386191, 
-                      south = 39.4826995752253, 
-                      east = -123.74737371621065, 
-                      north = 39.55675601496341)
+# spatial_extent_10Mile = list(west = -123.81261588386191, 
+#                       south = 39.4826995752253, 
+#                       east = -123.74737371621065, 
+#                       north = 39.55675601496341)
 
 #   Coal Oil Point Reserve (COPR)
 spatial_extent_COPR = list(west = -119.940191145, 
@@ -40,14 +40,15 @@ spatial_extent_COPR = list(west = -119.940191145,
 
 id = "SENTINEL2_L2A"
 bands = c("B01","B02","B03","B04","B05","B06","B07")
-temporal_extent = c("2018-09-09", "2018-09-11")
+#temporal_extent_10Mile = c("2018-09-09", "2018-09-11")
+temporal_extent_COPR = c("2018-07-14", "2018-07-15")
 
 p = processes()
 
 datacube = p$load_collection(
   id = id,
-  spatial_extent = spatial_extent,
-  temporal_extent = temporal_extent,
+  spatial_extent = spatial_extent_COPR,
+  temporal_extent = temporal_extent_COPR,
   bands = bands,
   max_cloud_cover=30
 )

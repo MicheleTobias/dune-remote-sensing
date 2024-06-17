@@ -41,7 +41,7 @@ spatial_extent_COPR = list(west = -119.940191145,
 # Download Data -----------------------------------------------------------
 
 id = "SENTINEL2_L2A"
-bands = c("B01","B02","B03","B04","B05","B06","B07")
+bands = c("B01","B02","B03","B04","B05","B06","B07", "B08", "B8A", "B11", "B12")
 #temporal_extent_10Mile = c("2018-09-09", "2018-09-11")
 temporal_extent_COPR = c("2018-07-11", "2018-07-15") #matches the date of the Lidar flight from the USGS Wildfire flight
 

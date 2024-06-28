@@ -31,9 +31,30 @@ ndwi <- function(green, nir){
 }
 
 
-# Analysis ----------------------------------------------------------------
+# Analysis: HWL ----------------------------------------------------------------
 #     Sentinel Bands: https://custom-scripts.sentinel-hub.com/custom-scripts/sentinel-2/bands/
+#     Sentinel 2 L2A data are "Bottom of the Atmosphere (BOA)" reflectance data: https://docs.sentinel-hub.com/api/latest/data/sentinel-2-l2a/ 
+# reflectance values might be stored without the decimal point to save space - i.e. a value of 2000 might actually be a reflectance of 0.2000 because reflectance should probably R[0,1]
+
+
+# what is the cutoff for band 8 to separate water from land?
+# is NDWI helpful?
+
+
+
+
+
+
+# Analysis: NDWI --------------------------------------------------------------------
+
+# R[-1, 0] = land (no water)
+# R[0, 1] = water
+ 
+# NDWI
 ndwi_sentinel <- ndwi(green = sentinel$`s2-2018-07-11_3`, nir = sentinel$`s2-2018-07-11_8`)
 ndwi_planet <- ndwi(green = planet$green, nir = planet$nir)
+
+# classify the NDWI into water vs. land pixels: https://rdrr.io/cran/terra/man/classify.html
+# make the line with a contour tool? https://rdrr.io/cran/terra/man/contour.html
 
 

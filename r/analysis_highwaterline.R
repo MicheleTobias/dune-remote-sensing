@@ -8,6 +8,7 @@ setwd("C:/Users/mmtobias/Documents/GitHub/dune-remote-sensing")
 
 # Libraries
 library(terra)
+library(sf)
 
 
 # Load Data
@@ -55,6 +56,28 @@ ndwi_sentinel <- ndwi(green = sentinel$`s2-2018-07-11_3`, nir = sentinel$`s2-201
 ndwi_planet <- ndwi(green = planet$green, nir = planet$nir)
 
 # classify the NDWI into water vs. land pixels: https://rdrr.io/cran/terra/man/classify.html
+
+ndwi_reclass_matrix <- matrix(
+  c(-2, 0, 0, # R[-1, 0) = land (no water)
+  0, 2, 1),  # R[0, 1] = water
+  ncol = 3,
+  byrow = TRUE
+)
+
+reclass_sentinel <- classify(
+  ndwi_sentinel, 
+  ndwi_reclass_matrix,
+  include.lowest = FALSE)
+
 # make the line with a contour tool? https://rdrr.io/cran/terra/man/contour.html
 
+contours_sentinel <- as.contour(reclass_sentinel, levels = c(0,1))
 
+lines_sentinel<-disagg(contours_sentinel)
+
+coast_sentinel <-lines_sentinel[which(perim(lines) == max(perim(lines)))]
+
+
+#look at the results in all their glory
+plotRGB(x = sentinel, r=4, g=3, b=2, stretch="lin")
+plot(coast_sentinel, col = "hot pink", lwd = 3, add=TRUE)

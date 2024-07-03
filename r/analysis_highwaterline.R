@@ -75,7 +75,7 @@ contours_sentinel <- as.contour(reclass_sentinel, levels = c(0,1))
 
 lines_sentinel<-disagg(contours_sentinel)
 
-coast_sentinel <-lines_sentinel[which(perim(lines) == max(perim(lines)))]
+coast_sentinel <-lines_sentinel[which(perim(lines_sentinel) == max(perim(lines_sentinel)))]
 
 
 #look at the results in all their glory

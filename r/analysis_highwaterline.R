@@ -69,15 +69,43 @@ reclass_sentinel <- classify(
   ndwi_reclass_matrix,
   include.lowest = FALSE)
 
+reclass_planet <- classify(
+  ndwi_planet, 
+  ndwi_reclass_matrix,
+  include.lowest = FALSE
+)
+
 # make the line with a contour tool? https://rdrr.io/cran/terra/man/contour.html
 
 contours_sentinel <- as.contour(reclass_sentinel, levels = c(0,1))
+contours_planet <- as.contour(reclass_planet, levels = c(0,1))
 
 lines_sentinel<-disagg(contours_sentinel)
+lines_planet<-disagg(contours_planet)
 
 coast_sentinel <-lines_sentinel[which(perim(lines_sentinel) == max(perim(lines_sentinel)))]
+coast_planet <-lines_planet[which(perim(lines_planet) == max(perim(lines_planet)))]
 
 
 #look at the results in all their glory
-plotRGB(x = sentinel, r=4, g=3, b=2, stretch="lin")
+par(mfrow=c(2,1))
+
+plotRGB(
+  x = sentinel, 
+  r=4, g=3, b=2, 
+  stretch="lin", 
+  main="Sentinel 2", 
+  loc.main="topleft",
+  col.main="white"
+  )
 plot(coast_sentinel, col = "hot pink", lwd = 3, add=TRUE)
+
+plotRGB(
+  x = planet, 
+  r=3, g=2, b=1, 
+  stretch="lin", 
+  main="Planet",
+  loc.main="topleft",
+  col.main="white"  
+  )
+plot(coast_planet, col = "hot pink", lwd = 3, add=TRUE)

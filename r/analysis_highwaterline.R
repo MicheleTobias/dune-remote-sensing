@@ -12,6 +12,8 @@ library(sf)
 
 
 # Load Data
+
+#   Satellite Imagery
 #     Note: both sentinel and planet data are in EPSG 32611 = WGS84/UTM Zone 11 N
 sentinel <- rast("data/imagery/s2-2018-07-11.tif")
 
@@ -20,6 +22,11 @@ sentinel <- rast("data/imagery/s2-2018-07-11.tif")
 planet <- rast("data/imagery/COPR_2018-07-13_psscene_analytic_sr_udm2/PSScene/20180713_181431_0f3b_3B_AnalyticMS_SR_clip.tif") 
 
 #plotRGB(x = planet, r=3, g=2, b=1, stretch="lin")
+
+
+#   Elevations
+dem <- rast("data/elevation/USGS_one_meter_x23y382_CA_SoCal_Wildfires_B4_2018.tif")
+dem <- project(dem, "EPSG:32611")
 
 
 
@@ -109,3 +116,26 @@ plotRGB(
   col.main="white"  
   )
 plot(coast_planet, col = "hot pink", lwd = 3, add=TRUE)
+
+par(mfrow=c(1,1))
+
+
+
+# Extract Single Elevation Coastline --------------------------------------
+
+# sample the raster along the line
+dem_extract_sentinel <- extract(
+  x = dem,
+  y = coast_sentinel
+)
+
+elev_coast_sentinel <- min(dem_extract_sentinel$Layer_1)
+
+dem_extract_planet <- extract(
+  x = dem,
+  y = coast_planet
+)
+
+elev_coast_planet <- min(dem_extract_planet$Layer_1)
+
+

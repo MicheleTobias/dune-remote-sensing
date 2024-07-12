@@ -13,6 +13,9 @@ library(sf)
 
 # Load Data
 
+#   AOI Polygon
+aoi <- vect("data/vector/area_of_interest.gpkg")
+
 #   Satellite Imagery
 #     Note: both sentinel and planet data are in EPSG 32611 = WGS84/UTM Zone 11 N
 sentinel <- rast("data/imagery/s2-2018-07-11.tif")
@@ -27,6 +30,17 @@ planet <- rast("data/imagery/COPR_2018-07-13_psscene_analytic_sr_udm2/PSScene/20
 #   Elevations
 dem <- rast("data/elevation/USGS_one_meter_x23y382_CA_SoCal_Wildfires_B4_2018.tif")
 dem <- project(dem, "EPSG:32611")
+
+#crop rasters 
+sentinel <- crop(
+  x=sentinel, 
+  y=aoi)
+planet <- crop(
+  x=planet, 
+  y=aoi)
+dem <- crop(
+  x=dem, 
+  y=aoi)
 
 
 
@@ -95,14 +109,14 @@ coast_planet <-lines_planet[which(perim(lines_planet) == max(perim(lines_planet)
 
 
 #look at the results in all their glory
-par(mfrow=c(2,1))
+par(mfrow=c(1,2))
 
 plotRGB(
   x = sentinel, 
   r=4, g=3, b=2, 
   stretch="lin", 
   main="Sentinel 2", 
-  loc.main="topleft",
+  loc.main="topright",
   col.main="white"
   )
 plot(coast_sentinel, col = "hot pink", lwd = 3, add=TRUE)
@@ -112,7 +126,7 @@ plotRGB(
   r=3, g=2, b=1, 
   stretch="lin", 
   main="Planet",
-  loc.main="topleft",
+  loc.main="topright",
   col.main="white"  
   )
 plot(coast_planet, col = "hot pink", lwd = 3, add=TRUE)

@@ -9,6 +9,7 @@ setwd("C:/Users/mmtobias/Documents/GitHub/dune-remote-sensing")
 # Libraries
 library(terra)
 library(sf)
+#library(smoothr)
 
 
 # Load Data
@@ -78,9 +79,13 @@ ndwi_planet <- ndwi(green = planet$green, nir = planet$nir)
 
 # classify the NDWI into water vs. land pixels: https://rdrr.io/cran/terra/man/classify.html
 
+break_reclass <- -0.04
+
 ndwi_reclass_matrix <- matrix(
-  c(-2, 0, 0, # R[-1, 0) = land (no water)
-  0, 2, 1),  # R[0, 1] = water
+  # c(-2, 0, 0, # R[-1, 0) = land (no water)
+  # 0, 2, 1),  # R[0, 1] = water
+  c(-2, break_reclass, 0, # R[-1, 0) = land (no water)
+    break_reclass, 2, 1),  # R[0, 1] = water
   ncol = 3,
   byrow = TRUE
 )
@@ -151,5 +156,11 @@ dem_extract_planet <- extract(
 )
 
 elev_coast_planet <- min(dem_extract_planet$Layer_1)
+
+# !!! NEXT STEPS !!!
+# use the elev_coast_x variable to reclassify the DEM
+# create a contour line (like before)
+# Keep the longest line
+# make FUNCTIONS for the processes that need to repeat over and over
 
 

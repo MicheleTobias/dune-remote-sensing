@@ -148,14 +148,53 @@ dem_extract_sentinel <- extract(
   y = coast_sentinel
 )
 
-elev_coast_sentinel <- min(dem_extract_sentinel$Layer_1)
+# the maximum elevation of the coastline identified with the NDWI analysis
+elev_sentinel <- max(dem_extract_sentinel$Layer_1)
+
+# reclassification matrix that breaks the DEM at the elevation of the coastline
+elev_sentinel_reclass_matrix <- matrix(
+  # c(-2, 0, 0, # R[-1, 0) = land (no water)
+  # 0, 2, 1),  # R[0, 1] = water
+  c(-10, elev_sentinel, 0, # R[-1, 0) = land (no water)
+    elev_sentinel, 10000, 1),  # R[0, 1] = water
+  ncol = 3,
+  byrow = TRUE
+)
+
+# reclassify the DEM using the reclassification matrix
+reclass_elev_sentinel <- classify(
+  dem, 
+  elev_sentinel_reclass_matrix,
+  include.lowest = FALSE)
+
+# turn the classified DEM into contour lines
+contours_elev_sentinel <- as.contour(reclass_elev_sentinel, levels = c(0,1))
+
+# disaggregate the result (break up the geometries into lines instead of one polyline)
+lines_elev_sentinel<-disagg(contours_elev_sentinel)
+
+# find and keep the longest line because it's most likely to be the coastline
+coastline_elev_sentinel <-lines_elev_sentinel[which(perim(lines_elev_sentinel) == max(perim(lines_elev_sentinel)))]
+
+
+plotRGB(
+  x = sentinel, 
+  r=4, g=3, b=2, 
+  stretch="lin", 
+  main="Sentinel 2", 
+  loc.main="topright",
+  col.main="white"
+  )
+plot(coastline_elev_sentinel, add = TRUE, col = "hotpink", lwd = 5)
+plot(coast_sentinel, add = TRUE, col = "blue", lwd = 2)
+
 
 dem_extract_planet <- extract(
   x = dem,
   y = coast_planet
 )
 
-elev_coast_planet <- min(dem_extract_planet$Layer_1)
+elev_coast_planet <- max(dem_extract_planet$Layer_1)
 
 # !!! NEXT STEPS !!!
 # use the elev_coast_x variable to reclassify the DEM

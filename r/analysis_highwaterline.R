@@ -228,10 +228,15 @@ plot(coast_planet, add = TRUE, col = "blue", lwd = 2)
 
 par(mfrow=c(1,1))
 
-# !!! NEXT STEPS !!!
-# use the elev_coast_x variable to reclassify the DEM
-# create a contour line (like before)
-# Keep the longest line
-# make FUNCTIONS for the processes that need to repeat over and over
+# save the coastlines
+
+coastlines <- rbind(coastline_elev_sentinel, coastline_elev_planet)
+coastlines$image_source <- c("sentinel", "planet")
+
+writeVector(
+  x = coastlines,
+  filename = "data/vector/beach_features.gpkg",
+  layer = "coastlines"
+)
 
 

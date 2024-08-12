@@ -40,6 +40,16 @@ dem <- crop(
 
 
 
+# Functions ---------------------------------------------------------------
+
+# NDVI = (NIR - R) / (NIR + R)
+ndvi <- function(red, nir){
+  ndvi = (nir - red)/(nir + red)
+  return(ndvi)
+}
+
+
 # Identify Plant Pixels ---------------------------------------------------
 
+# ??? is NDVI really the best option for CA beach plants? ???
 

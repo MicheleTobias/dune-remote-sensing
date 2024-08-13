@@ -57,5 +57,5 @@ ndvi <- function(red, nir){
 # ??? is NDVI really the best option for CA beach plants? ???
 
 # Sentinel === red = B04  nir = B08 -> NIR @ 10m resolution
-ndvi_sentinel = ndvi(nir = sentinel@'s2-2018-07-11_8', red = sentinel@'s2-2018-07-11_8')
+ndvi_sentinel <- ndvi(nir = sentinel$`s2-2018-07-11_4`, red = sentinel$`s2-2018-07-11_8`)
 

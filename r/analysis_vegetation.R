@@ -10,6 +10,7 @@ setwd("C:/Users/mmtobias/Documents/GitHub/dune-remote-sensing")
 
 # Libraries
 library(terra)
+library(sf)
 
 
 
@@ -38,6 +39,8 @@ dem <- crop(
   x=dem, 
   y=aoi)
 
+#high water lines
+hwl <- vect("data/vector/beach_features.gpkg", layer="coastlines")
 
 
 # Functions ---------------------------------------------------------------
@@ -52,4 +55,7 @@ ndvi <- function(red, nir){
 # Identify Plant Pixels ---------------------------------------------------
 
 # ??? is NDVI really the best option for CA beach plants? ???
+
+# Sentinel === red = B04  nir = B08 -> NIR @ 10m resolution
+ndvi_sentinel = ndvi(nir = sentinel@'s2-2018-07-11_8', red = sentinel@'s2-2018-07-11_8')
 

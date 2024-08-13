@@ -4,17 +4,44 @@
 # Set Up ------------------------------------------------------------------
 
 # libraries
-
+library(terra)
+library(sf)
+library(devtools)
+devtools::install_github("paulhegedus/SampleBuilder")
 
 # read data
 
+#   AOI Polygon
+aoi <- vect("data/vector/area_of_interest.gpkg")
+
+#   dem
+dem <- rast("data/elevation/USGS_one_meter_x23y382_CA_SoCal_Wildfires_B4_2018.tif")
+dem <- project(dem, "EPSG:32611")
+
+dem <- crop(
+  x=dem, 
+  y=aoi)
+
+#   high water lines
+hwl <- vect("data/vector/beach_features.gpkg", layer="coastlines")
+
+hwl_sentinel <- hwl[which(hwl$image_source == 'sentinel'),]
 
 
 # Analysis ----------------------------------------------------------------
 
 # construct a baseline from the first and last vertexes of the HWL
 
-# construct the transects: https://github.com/paulhegedus/SampleBuilder/
+latlong <- geom(hwl_sentinel)[c(1, dim(geom(hwl_sentinel))[1]), 3:4]
+
+wkt_baseline <- paste0("LINESTRING(", latlong[1,1], " ", latlong[1,2], ", ", latlong[2,1], " ", latlong[2,2], ")")
+
+baseline <- vect(wkt_baseline, crs="EPSG:32611")
+
+# construct the transects: https://github.com/paulhegedus/SampleBuilder/ <- requires saving shapefiles... boo.
+# Make your own: https://stackoverflow.com/questions/74844804/finding-a-set-of-equally-spaced-perpendicular-lines-along-boundaries-in-r 
+
+transects <- make_transects()
 
 # sample the DEM at each transect
 

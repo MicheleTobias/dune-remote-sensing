@@ -52,9 +52,29 @@ slope_baseline <- (coords_baseline[2, 2] - coords_baseline[1, 2]) / (coords_base
 
 # slope to angle: 90 - 180 * atan( slope ) / pi
 
-angle_baseline <- (90 - 180* atan(slope_baseline))/pi
+angle_baseline <- 90-(180*atan(slope_baseline)/pi)
+#angle_baseline <- (180*atan(slope_baseline))/pi
 
+# !!! the angle for cos/sin/tan needs to be in RADIANS!!! 1rad × 180/π = 57.296°
+offset_y <- 200 * cos(pi*(90 + angle_baseline)/180)
+offset_x <- 200 * sin(pi*(90 + angle_baseline)/180)
 
+start_point <- coords_baseline[1,]
+end_point <- start_point + data.frame(matrix(c(offset_x, offset_y), byrow = TRUE, ncol=2))
+
+transect_coords <- rbind(start_point, end_point)
+
+transect_wkt <- paste0(
+  "LINESTRING(", 
+  transect_coords[1,1], 
+  " ", 
+  transect_coords[1,2], 
+  ", ", 
+  transect_coords[2,1], 
+  " ", 
+  transect_coords[2,2], ")")
+
+transect <- vect(transect_wkt, crs="EPSG:32611")
 
 # sample the DEM at each transect
 

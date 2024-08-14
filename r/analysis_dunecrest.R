@@ -3,11 +3,13 @@
 
 # Set Up ------------------------------------------------------------------
 
+setwd("C:/Users/mmtobias/Documents/GitHub/dune-remote-sensing")
+
 # libraries
 library(terra)
 library(sf)
-library(devtools)
-devtools::install_github("paulhegedus/SampleBuilder")
+# library(devtools)
+# devtools::install_github("paulhegedus/SampleBuilder")
 
 # read data
 
@@ -41,7 +43,18 @@ baseline <- vect(wkt_baseline, crs="EPSG:32611")
 # construct the transects: https://github.com/paulhegedus/SampleBuilder/ <- requires saving shapefiles... boo.
 # Make your own: https://stackoverflow.com/questions/74844804/finding-a-set-of-equally-spaced-perpendicular-lines-along-boundaries-in-r 
 
-transects <- make_transects()
+# create an ordered (by x value) dataframe of coordinates for the baseline
+coords_baseline <- data.frame(geom(baseline)[,3:4])
+coords_baseline <- coords_baseline[order(coords_baseline$x),]
+
+# slope of the line: slope =(y₂ - y₁)/(x₂ - x₁)
+slope_baseline <- (coords_baseline[2, 2] - coords_baseline[1, 2]) / (coords_baseline[2,1] - coords_baseline[1,1])
+
+# slope to angle: 90 - 180 * atan( slope ) / pi
+
+angle_baseline <- (90 - 180* atan(slope_baseline))/pi
+
+
 
 # sample the DEM at each transect
 

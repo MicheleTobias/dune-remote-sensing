@@ -78,12 +78,13 @@ construct_transects <- function(baseline, transect_spacing, transect_length){
   offset_y <- transect_length * cos(pi*(90 + angle_baseline)/180)
   offset_x <- transect_length * sin(pi*(90 + angle_baseline)/180)
   
-  # an empty dataframe to store WKT for transects as they get constructed
-  transects_wkt_list <- data.frame()
+  # an empty spatvector to store WKT for transects as they get constructed
+  transects <- vect()
   
   for(i in 1:dim(transect_points)[1]){
     start_point <- transect_points[i,]
     end_point <- start_point + data.frame(matrix(c(offset_x, offset_y), byrow = TRUE, ncol=2))
+    start_point <- start_point - data.frame(matrix(c(offset_x, offset_y), byrow = TRUE, ncol=2))
     
     transect_coords <- rbind(start_point, end_point)
     
@@ -98,11 +99,16 @@ construct_transects <- function(baseline, transect_spacing, transect_length){
       transect_coords[2,2], ")")
     
     add_transect <- vect(transect_wkt, crs="EPSG:32611")
-    baseline <- terra::union(baseline, add_transect)
+    #baseline <- terra::union(baseline, add_transect)
+    transects <- terra::union(transects, add_transect)
     
   } # end for loop for baseline points
   
-  transects <- baseline[-1, ]
+  # remove the baseline line from the vector
+  #transects <- baseline[-1, ]
+  
+  # reset the id because we removed the first item
+  #transects$ID <- transects$ID - 1
   
   return(transects)
   
@@ -111,17 +117,19 @@ construct_transects <- function(baseline, transect_spacing, transect_length){
 
 
 
-transects <- construct_transects(baseline=baseline, transect_spacing = 100, transect_length = 100)
-
-
-
-
+transects <- construct_transects(baseline=baseline, transect_spacing = 100, transect_length = 200)
 
 # sample the DEM at each transect
 
-transect_elevations <- extractAlong(
+# transect_elevations <- extractAlong(
+#   x = dem,
+#   y = transects
+# )
+
+# maybe we need points along the line to be able to identify where the inflection is geographically
+transect_elevations <- extract(
   x = dem,
-  y = transect
+  y = transects
 )
 
 # calculate the change in slope and find the points of inflection

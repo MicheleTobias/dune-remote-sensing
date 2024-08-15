@@ -43,40 +43,86 @@ baseline <- vect(wkt_baseline, crs="EPSG:32611")
 # construct the transects: https://github.com/paulhegedus/SampleBuilder/ <- requires saving shapefiles... boo.
 # Make your own: https://stackoverflow.com/questions/74844804/finding-a-set-of-equally-spaced-perpendicular-lines-along-boundaries-in-r 
 
-# create an ordered (by x value) dataframe of coordinates for the baseline
-coords_baseline <- data.frame(geom(baseline)[,3:4])
-coords_baseline <- coords_baseline[order(coords_baseline$x),]
+# make points along a line to use as the starting point for transects:
+# terra::densify(line,interval =min(res(r))/2, flat=TRUE)
 
-# slope of the line: slope =(y₂ - y₁)/(x₂ - x₁)
-slope_baseline <- (coords_baseline[2, 2] - coords_baseline[1, 2]) / (coords_baseline[2,1] - coords_baseline[1,1])
 
-# slope to angle: 90 - 180 * atan( slope ) / pi
 
-angle_baseline <- 90-(180*atan(slope_baseline)/pi)
-#angle_baseline <- (180*atan(slope_baseline))/pi
+# FUNCTION construct_transects()
+#     baseline = a line (a terra spatVector) composed of two vertexes (start and end) representing the line for constructing transects perpendicular to
+#     transect_spacing = the distance between transects (meters for latlon, crs units for other projections)
+#     transect_length = how long should the transects be?
 
-# !!! the angle for cos/sin/tan needs to be in RADIANS!!! 1rad × 180/π = 57.296°
-offset_y <- 200 * cos(pi*(90 + angle_baseline)/180)
-offset_x <- 200 * sin(pi*(90 + angle_baseline)/180)
+construct_transects <- function(baseline, transect_spacing, transect_length){
+  # create an ordered (by x value) dataframe of coordinates for the baseline
+  coords_baseline <- data.frame(geom(baseline)[,3:4])
+  coords_baseline <- coords_baseline[order(coords_baseline$x),]
+  
+  # create an ordered (by x value) dataframe of coordinates for the baseline
+  coords_baseline <- data.frame(geom(baseline)[,3:4])
+  coords_baseline <- coords_baseline[order(coords_baseline$x),]
+  
+  # slope of the line: slope =(y₂ - y₁)/(x₂ - x₁)
+  slope_baseline <- (coords_baseline[2, 2] - coords_baseline[1, 2]) / (coords_baseline[2,1] - coords_baseline[1,1])
+  
+  # slope to angle: 90 - 180 * atan( slope ) / pi
+  
+  angle_baseline <- 90-(180*atan(slope_baseline)/pi)
+  #angle_baseline <- (180*atan(slope_baseline))/pi
+  
+  # add points to baseline at the interval needed for the transects
+  densify_baseline <- densify(x = baseline, interval = transect_spacing, equalize = FALSE, flat = FALSE)
+  transect_points <- geom(densify_baseline)[, 3:4]
+  
+  # !!! the angle for cos/sin/tan needs to be in RADIANS!!! 1rad × 180/π = 57.296°
+  offset_y <- transect_length * cos(pi*(90 + angle_baseline)/180)
+  offset_x <- transect_length * sin(pi*(90 + angle_baseline)/180)
+  
+  # an empty dataframe to store WKT for transects as they get constructed
+  transects_wkt_list <- data.frame()
+  
+  for(i in 1:dim(transect_points)[1]){
+    start_point <- transect_points[i,]
+    end_point <- start_point + data.frame(matrix(c(offset_x, offset_y), byrow = TRUE, ncol=2))
+    
+    transect_coords <- rbind(start_point, end_point)
+    
+    transect_wkt <- paste0(
+      "LINESTRING(", 
+      transect_coords[1,1], 
+      " ", 
+      transect_coords[1,2], 
+      ", ", 
+      transect_coords[2,1], 
+      " ", 
+      transect_coords[2,2], ")")
+    
+    add_transect <- vect(transect_wkt, crs="EPSG:32611")
+    baseline <- terra::union(baseline, add_transect)
+    
+  } # end for loop for baseline points
+  
+  transects <- baseline[-1, ]
+  
+  return(transects)
+  
+} #end of function
 
-start_point <- coords_baseline[1,]
-end_point <- start_point + data.frame(matrix(c(offset_x, offset_y), byrow = TRUE, ncol=2))
 
-transect_coords <- rbind(start_point, end_point)
 
-transect_wkt <- paste0(
-  "LINESTRING(", 
-  transect_coords[1,1], 
-  " ", 
-  transect_coords[1,2], 
-  ", ", 
-  transect_coords[2,1], 
-  " ", 
-  transect_coords[2,2], ")")
 
-transect <- vect(transect_wkt, crs="EPSG:32611")
+transects <- construct_transects(baseline=baseline, transect_spacing = 100, transect_length = 100)
+
+
+
+
 
 # sample the DEM at each transect
+
+transect_elevations <- extractAlong(
+  x = dem,
+  y = transect
+)
 
 # calculate the change in slope and find the points of inflection
 

@@ -150,6 +150,13 @@ transect_slopes <- extract(
   y = transects_points
 )
 
+# topographic position index
+#     Reference: https://blogs.ubc.ca/tdeenik/2021/02/16/topographic-position-index-tpi/
+#     GDAL/terra uses a 3x3 window and you can't change it - small windows are good for identifying small features
+#     Reference: https://landscapearchaeology.org/2019/tpi/ 
+#     TPI is equivalent to a local relief model (LRM)
+tpi <- terrain(dem, v="TPI")
+
 # join the points to the elevation data (why wouldn't it keep the previous attributes?)
 transects_points$elevations <- transect_elevations$Layer_1
 transects_points$slopes <- transect_slopes$slope
@@ -159,6 +166,7 @@ transects_points$slopes <- transect_slopes$slope
 
 #plotting to check results
 pal <- colorRampPalette(c("lightblue", "purple4"))
+diverging_pal <-colorRampPalette(c("lightblue", "white", "black"))
 plotRGB(
   x = sentinel, 
   r=4, g=3, b=2, 
@@ -170,7 +178,25 @@ plotRGB(
 plot(transects_points, "elevations", cex=.5, col=pal(25), add=TRUE)
 plot(transects_points, "slopes", cex=.5, col=pal(25))
 
+plot(tpi, col=diverging_pal(25))
+
 # calculate the change in slope and find the points of inflection
 
 
+terra::contour(tpi)
 
+# Clusters with TPI and elevation
+# https://stackoverflow.com/questions/76323195/clustering-a-spatial-raster-stack
+rasters <- c(dem, tpi)
+d <- as.data.frame(rasters, cell=T)
+d$TPI[which(is.na(d$TPI))]<- -999
+k.clust <- kmeans(d[,-1], centers = 20) #removing the first column which is the cell number
+krast <- rast(dem, nlyr=1)
+krast[d$cell] <- k.clust$cluster
+plot(krast)
+
+# try selecting cells with certain values
+d$combo[which(d$Layer_1<10&d$TPI<.1)]<-1
+krast[d$cell] <- d$combo
+plot(krast)
+#probably buffering out the upland area would help reduce the confusion.

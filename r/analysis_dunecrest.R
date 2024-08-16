@@ -116,21 +116,59 @@ construct_transects <- function(baseline, transect_spacing, transect_length){
 
 
 
-
+# use my construct_transect() function to make transects based on the baseline
 transects <- construct_transects(baseline=baseline, transect_spacing = 100, transect_length = 200)
 
 # sample the DEM at each transect
 
-# transect_elevations <- extractAlong(
-#   x = dem,
-#   y = transects
-# )
+# something odd happens with extractAlong()
+# transect_elevations <- extractAlong(x = dem, y = transects)
 
-# maybe we need points along the line to be able to identify where the inflection is geographically
+# add vertexes along the transects to use as sample points
+densify_transects <- densify(x = transects, interval = 1, equalize = FALSE, flat = FALSE)
+# add a transect id number so we know which transect each point belongs to
+densify_transects$transect_id <- 1:dim(transects)[1]
+# turn the lines into points
+transects_points <- as.points(densify_transects)
+# add a point id to each point
+point_ids<-c()
+for(i in unique(transects_points$transect_id)){
+  print(i)
+  point_ids<-c(point_ids, length(transects_points[which(transects_points$transect_id==i)]):1)
+} # end for loop for assigning point ids
+transects_points$point_ids<-point_ids
+
+
 transect_elevations <- extract(
   x = dem,
-  y = transects
+  y = transects_points
 )
+
+slopes <- terrain(dem, v="slope")
+transect_slopes <- extract(
+  x = slopes,
+  y = transects_points
+)
+
+# join the points to the elevation data (why wouldn't it keep the previous attributes?)
+transects_points$elevations <- transect_elevations$Layer_1
+transects_points$slopes <- transect_slopes$slope
+
+# calculate the elevation change between points heading inland on the transects
+
+
+#plotting to check results
+pal <- colorRampPalette(c("lightblue", "purple4"))
+plotRGB(
+  x = sentinel, 
+  r=4, g=3, b=2, 
+  stretch="lin", 
+  main="Sentinel 2", 
+  loc.main="topright",
+  col.main="white"
+)
+plot(transects_points, "elevations", cex=.5, col=pal(25), add=TRUE)
+plot(transects_points, "slopes", cex=.5, col=pal(25))
 
 # calculate the change in slope and find the points of inflection
 

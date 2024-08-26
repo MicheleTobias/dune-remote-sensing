@@ -10,8 +10,18 @@ setwd("C:/Users/mmtobias/Documents/GitHub/dune-remote-sensing")
 
 source("r/load_data.R")
 
-#load high water lines
+# load high water lines
 hwl <- vect("data/vector/beach_features.gpkg", layer="coastlines")
+hwl_sentinel <- hwl[which(hwl$image_source == 'sentinel'),]
+hwl_planet <- hwl[which(hwl$image_source == 'planet'),]
+
+# load beach polygons
+beaches <- vect("data/vector/beach_features.gpkg", layer="beaches")
+beach_sentinel <- beaches[which(beaches$image_source == 'sentinel'),]
+beach_planet <- beaches[which(beaches$image_source == 'planet'),]
+
+# crop images to beach polygons with crop()
+
 
 
 # Functions ---------------------------------------------------------------

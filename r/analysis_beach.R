@@ -29,4 +29,18 @@ reclass_sentinel <- classify(
   ndwi_reclass_matrix,
   include.lowest = FALSE)
 
-plot(reclass_sentinel)
+reclass_planet <- classify(
+  ndwi_planet, 
+  ndwi_reclass_matrix,
+  include.lowest = FALSE)
+
+plot(reclass_planet)
+
+reclass_sentinel[which(reclass_sentinel[,,1]!=1)] <- NA
+reclass_planet[which(reclass_planet[,,1]!=1)] <- NA
+
+sand_sentinel <- disagg(fillHoles(as.polygons(reclass_sentinel)))
+sand_planet <- disagg(fillHoles(as.polygons(reclass_planet)))
+
+beach_sentinel <- sand_sentinel[which(expanse(sand_sentinel) == max(expanse(sand_sentinel)))]
+beach_planet <- sand_planet[which(expanse(sand_planet) == max(expanse(sand_planet)))]

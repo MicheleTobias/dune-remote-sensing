@@ -5,26 +5,9 @@
 
 setwd("C:/Users/mmtobias/Documents/GitHub/dune-remote-sensing")
 
-# libraries
-library(terra)
-library(sf)
-# library(devtools)
-# devtools::install_github("paulhegedus/SampleBuilder")
+source("r/load_data.R")
 
-# read data
-
-#   AOI Polygon
-aoi <- vect("data/vector/area_of_interest.gpkg")
-
-#   dem
-dem <- rast("data/elevation/USGS_one_meter_x23y382_CA_SoCal_Wildfires_B4_2018.tif")
-dem <- project(dem, "EPSG:32611")
-
-dem <- crop(
-  x=dem, 
-  y=aoi)
-
-#   high water lines
+# load high water lines
 hwl <- vect("data/vector/beach_features.gpkg", layer="coastlines")
 
 hwl_sentinel <- hwl[which(hwl$image_source == 'sentinel'),]

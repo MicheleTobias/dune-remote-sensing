@@ -15,12 +15,8 @@ hwl <- vect("data/vector/beach_features.gpkg", layer="coastlines")
 
 
 # Functions ---------------------------------------------------------------
+# functions now load in the load_data.R script
 
-# NDVI = (NIR - R) / (NIR + R)
-ndvi <- function(red, nir){
-  ndvi = (nir - red)/(nir + red)
-  return(ndvi)
-}
 
 
 # Identify Plant Pixels ---------------------------------------------------
@@ -29,4 +25,5 @@ ndvi <- function(red, nir){
 
 # Sentinel === red = B04  nir = B08 -> NIR @ 10m resolution
 ndvi_sentinel <- ndvi(nir = sentinel$`s2-2018-07-11_4`, red = sentinel$`s2-2018-07-11_8`)
+ndvi_planet <- ndvi(nir=planet$nir, red=planet$red)
 

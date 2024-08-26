@@ -11,6 +11,24 @@ library(sf)
 
 
 
+#  LOAD FUNCTIONS ---------------------------------------------------------
+
+
+# NDWI = (Green - NIR) / (Green + NIR)
+ndwi <- function(green, nir){
+  ndwi = (green - nir)/(green + nir)
+  return(ndwi)
+}
+
+
+# NDVI = (NIR - R) / (NIR + R)
+ndvi <- function(red, nir){
+  ndvi = (nir - red)/(nir + red)
+  return(ndvi)
+}
+
+
+
 # LOAD DATA ---------------------------------------------------------------
 
 # AOI Polygon

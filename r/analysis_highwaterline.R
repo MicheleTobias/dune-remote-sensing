@@ -9,12 +9,7 @@ source("r/load_data.R")
 
 
 # Functions -------------------------------------------------------------------------
-
-# NDWI = (Green - NIR) / (Green + NIR)
-ndwi <- function(green, nir){
-  ndwi = (green - nir)/(green + nir)
-  return(ndwi)
-}
+# functions now load in the load_data.R script
 
 
 # Analysis: HWL ----------------------------------------------------------------

@@ -180,6 +180,9 @@ plot(transects_points, "slopes", cex=.5, col=pal(25))
 
 plot(tpi, col=diverging_pal(25))
 
+# calculate the distance to the water line
+dist_hwl <- distance(x=dem, y=hwl_sentinel)
+
 # calculate the change in slope and find the points of inflection
 
 

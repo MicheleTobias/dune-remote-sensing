@@ -44,3 +44,19 @@ sand_planet <- disagg(fillHoles(as.polygons(reclass_planet)))
 
 beach_sentinel <- sand_sentinel[which(expanse(sand_sentinel) == max(expanse(sand_sentinel)))]
 beach_planet <- sand_planet[which(expanse(sand_planet) == max(expanse(sand_planet)))]
+
+
+
+# Write the Data ----------------------------------------------------------
+
+beaches <- rbind(beach_sentinel, beach_planet)
+beaches$image_source <- c("sentinel", "planet")
+beaches <- beaches[, 3] #keep the one column that we need (image_source)
+
+writeVector(
+  x = beaches,
+  filename = "data/vector/beach_features.gpkg",
+  layer = "beaches",
+  insert = TRUE
+)
+

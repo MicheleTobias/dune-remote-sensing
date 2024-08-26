@@ -53,6 +53,7 @@ beaches <- rbind(beach_sentinel, beach_planet)
 beaches$image_source <- c("sentinel", "planet")
 beaches <- beaches[, 3] #keep the one column that we need (image_source)
 
+# Note: if you need to remove a layer from a geopackage, use vector_layers()
 writeVector(
   x = beaches,
   filename = "data/vector/beach_features.gpkg",

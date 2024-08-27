@@ -28,7 +28,8 @@ beach_sentinel <- beaches[which(beaches$image_source == 'sentinel'),]
 beach_planet <- beaches[which(beaches$image_source == 'planet'),]
 
 # crop images to beach polygons with crop()
-
+sentinel_crop <- crop(sentinel, beach_sentinel, mask=TRUE)
+planet_crop <- crop(planet, beach_planet, mask=TRUE)
 
 
 # Functions ---------------------------------------------------------------
@@ -41,6 +42,11 @@ beach_planet <- beaches[which(beaches$image_source == 'planet'),]
 # ??? is NDVI really the best option for CA beach plants? ???
 
 # Sentinel === red = B04  nir = B08 -> NIR @ 10m resolution
-ndvi_sentinel <- ndvi(nir = sentinel$`s2-2018-07-11_4`, red = sentinel$`s2-2018-07-11_8`)
-ndvi_planet <- ndvi(nir=planet$nir, red=planet$red)
+ndvi_sentinel <- ndvi(
+  nir = sentinel_crop$`s2-2018-07-11_4`, 
+  red = sentinel_crop$`s2-2018-07-11_8`)
+
+ndvi_planet <- ndvi(
+  nir=planet_crop$nir, 
+  red=planet_crop$red)
 

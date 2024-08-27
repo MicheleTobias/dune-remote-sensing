@@ -3,7 +3,13 @@
 # Set Up ------------------------------------------------------------------
 setwd("C:/Users/mmtobias/Documents/GitHub/dune-remote-sensing")
 
-source("r/load_data.R")
+# check to see if the dem variable (the last variable in the script) is avaialble. If it's not, run the script that loads the data to get the imagery and DEM clipped to the study site. Note that clipping the DEM takes a while.
+if(exists("dem")){
+  print("Load Data script is already loaded.")
+} else{
+  print("Loading the Load Data script. This may take a few minutes.")
+  source("r/load_data.R")
+}
 
 #  Identify Beach Area ----------------------------------------------------
 

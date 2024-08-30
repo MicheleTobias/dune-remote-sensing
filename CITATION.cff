@@ -1,0 +1,31 @@
+# This CITATION.cff file was generated with cffinit.
+# Visit https://bit.ly/cffinit to generate yours today!
+
+cff-version: 1.2.0
+title: Dune Remote Sensing Repository
+message: >-
+  If you use this software, please cite it using the
+  metadata from this file.
+type: software
+authors:
+  - given-names: Michele
+    family-names: Tobias
+    email: mmtobias@ucdavis.edu
+    orcid: 'https://orcid.org/0000-0002-2954-8710'
+repository-code: 'https://github.com/MicheleTobias/dune-remote-sensing'
+abstract: >-
+  Beaches the world over are under threat from sea level
+  rise. The concept of living shorelines as a way to restore
+  the protective power of beaches and dunes is gaining
+  traction in many coastal areas, but managers need to know
+  more about how plant species work with sand to create
+  dunes. Ground sampling is time-consuming and custom remote
+  sensing flights are expensive. Using a site in California
+  as an example, I’ll explore ways to leverage open
+  elevation data (lidar & DEMs) and open source software (R
+  & QGIS) to better understand how plants build dunes. This
+  workflow is applicable to ecosystems where topography
+  plays an important role in understanding ecological
+  interactions, such as riparian or lakeshore plant
+  communities.
+license: MIT

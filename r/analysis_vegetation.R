@@ -40,8 +40,8 @@ beach_planet <- beaches[which(beaches$image_source == 'planet'),]
 
 # Sentinel === red = B04  nir = B08 -> NIR @ 10m resolution
 ndvi_sentinel <- ndvi(
-  nir = sentinel$`s2-2018-07-11_4`, 
-  red = sentinel$`s2-2018-07-11_8`)
+  red = sentinel$`s2-2018-07-11_4`, 
+  nir = sentinel$`s2-2018-07-11_8`)
 
 ndvi_planet <- ndvi(
   nir=planet$nir, 
@@ -52,13 +52,11 @@ ndvi_sentinel_crop <- crop(ndvi_sentinel, beach_sentinel, mask=TRUE)
 ndvi_planet_crop <- crop(ndvi_planet, beach_planet, mask=TRUE)
 
 # reclassify the sentinel ndvi to reveal the plant pixels
-break_reclass <- -0.04
+break_reclass <- 0.08
 
 ndwi_reclass_matrix <- matrix(
-  # c(-2, 0, 0, # R[-1, 0) = land (no water)
-  # 0, 2, 1),  # R[0, 1] = water
-  c(-2, break_reclass, 0, # R[-1, 0) = land (no water)
-    break_reclass, 2, 1),  # R[0, 1] = water
+  c(-2, break_reclass, 0, # R[-2, break) = 0 = sand
+    break_reclass, 2, 1),  # R[0, break] = 1 = plants
   ncol = 3,
   byrow = TRUE
 )
@@ -76,7 +74,7 @@ break_reclass <- 0.08
 ndwi_reclass_matrix <- matrix(
   # c(-2, 0, 0, # R[-1, 0) = land (no water)
   # 0, 2, 1),  # R[0, 1] = water
-  c(-2, break_reclass, 0, # R[-1, 0) = land (no water)
+  c(-2, break_reclass, 0, # R[-1, 0) = 0 land (no water)
     break_reclass, 2, 1),  # R[0, 1] = water
   ncol = 3,
   byrow = TRUE
@@ -88,3 +86,17 @@ reclass_ndvi_planet <- classify(
   include.lowest = FALSE)
 
 plot(reclass_ndvi_planet)
+
+
+
+
+# plot the reclass results together
+par(mfrow=c(1, 2))
+plot(reclass_ndvi_sentinel, col = c("lightpink", "hotpink"), main="Sentinel", legend="topright")
+plot(reclass_ndvi_planet, col = c("lightpink", "hotpink"), main="Planet", legend="topright")
+
+
+# plot NDVI
+par(mfrow=c(1, 2))
+plot(ndvi_sentinel_crop, title="Sentinel NDVI")
+plot(ndvi_planet_crop, title="Planet NDVI")

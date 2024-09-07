@@ -52,7 +52,7 @@ ndvi_sentinel_crop <- crop(ndvi_sentinel, beach_sentinel, mask=TRUE)
 ndvi_planet_crop <- crop(ndvi_planet, beach_planet, mask=TRUE)
 
 # reclassify the sentinel ndvi to reveal the plant pixels
-break_reclass <- 0.08
+break_reclass <- 0.05
 
 ndwi_reclass_matrix <- matrix(
   c(-2, break_reclass, 0, # R[-2, break) = 0 = sand
@@ -69,7 +69,7 @@ reclass_ndvi_sentinel <- classify(
 plot(reclass_ndvi_sentinel)
 
 # reclassify the planet ndvi to reveal the plant pixels
-break_reclass <- 0.08
+#break_reclass <- 0.08
 
 ndwi_reclass_matrix <- matrix(
   # c(-2, 0, 0, # R[-1, 0) = land (no water)
@@ -85,7 +85,7 @@ reclass_ndvi_planet <- classify(
   ndwi_reclass_matrix,
   include.lowest = FALSE)
 
-plot(reclass_ndvi_planet)
+#plot(reclass_ndvi_planet)
 
 
 

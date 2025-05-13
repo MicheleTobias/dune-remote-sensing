@@ -17,7 +17,12 @@ Because beach ecosystems change daily, having simultaneous imagery and elevation
 I am exploring the utility of publicly available species observation data through platforms like iNaturalist for validating plant pixels.
 
 
-## Citations
+## Presentations of this Work
+Tobias, M.M. 2024. My Talk is Just Beach Remote Sensing. FOSS4G North America. Sept. 9-11, 2024. St. Louis, Mo.  
+[Slides](https://docs.google.com/presentation/d/1VPetna9C1JGrjVjghJlhIcQYhbeaxYQobuq5mJcbSeE) - [Video](https://www.youtube.com/watch?v=C_AkJokGxNw&pp=ygUkbXkgdGFsayBpcyBqdXN0IGJlYWNoIHJlbW90ZSBzZW5zaW5n)
+
+
+## Related Citations
 
 Yousefi Lalimi, F., S. Silvestri, L. J. Moore, and M. Marani (2017), [Coupled topographic and vegetation patterns in coastal dunes: Remote sensing observations and ecomorphodynamic implications](https://agupubs.onlinelibrary.wiley.com/doi/full/10.1002/2016JG003540), J. Geophys. Res. Biogeosci., 122, 119–130, doi:10.1002/2016JG003540.
 

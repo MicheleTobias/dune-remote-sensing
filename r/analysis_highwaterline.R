@@ -5,7 +5,7 @@
 # Set Up ------------------------------------------------------------------
 setwd("C:/Users/mmtobias/Documents/GitHub/dune-remote-sensing")
 
-# check to see if the dem variable (the last variable in the script) is avaialble. If it's not, run the script that loads the data to get the imagery and DEM clipped to the study site. Note that clipping the DEM takes a while.
+# check to see if the dem variable (the last variable in the script) is available. If it's not, run the script that loads the data to get the imagery and DEM clipped to the study site. Note that clipping the DEM takes a while.
 if(exists("dem")){
   print("Load Data script is already loaded.")
 } else{
@@ -15,8 +15,6 @@ if(exists("dem")){
 
 
 # Functions -------------------------------------------------------------------------
-# functions now load in the load_data.R script
-
 
 # Analysis: HWL ----------------------------------------------------------------
 #     Sentinel Bands: https://custom-scripts.sentinel-hub.com/custom-scripts/sentinel-2/bands/

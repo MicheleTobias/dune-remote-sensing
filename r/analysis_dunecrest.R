@@ -154,8 +154,14 @@ transects_points$slopes <- transect_slopes$slope
 
 
 #plotting to check results
+
+# define color palettes
 pal <- colorRampPalette(c("lightblue", "purple4"))
 diverging_pal <-colorRampPalette(c("lightblue", "white", "black"))
+
+red_black_pal <- colorRampPalette(c("darkred", "white", "black"))
+
+
 plotRGB(
   x = sentinel, 
   r=4, g=3, b=2, 
@@ -168,6 +174,7 @@ plot(transects_points, "elevations", cex=.5, col=pal(25), add=TRUE)
 plot(transects_points, "slopes", cex=.5, col=pal(25))
 
 plot(tpi, col=diverging_pal(25))
+plot(tpi, col=red_black_pal(25))
 
 # calculate the distance to the water line
 dist_hwl <- distance(x=dem, y=hwl_sentinel)

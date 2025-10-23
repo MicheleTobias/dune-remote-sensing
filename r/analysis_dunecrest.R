@@ -3,7 +3,10 @@
 
 # Set Up ------------------------------------------------------------------
 
+#set working directory
 setwd("C:/Users/mmtobias/Documents/GitHub/dune-remote-sensing")
+
+
 
 # check to see if the dem variable (the last variable in the script) is avaialble. If it's not, run the script that loads the data to get the imagery and DEM clipped to the study site. Note that clipping the DEM takes a while.
 if(exists("dem")){
@@ -13,30 +16,23 @@ if(exists("dem")){
   source("r/load_data.R")
 }
 
+
 # load high water lines
 hwl <- vect("data/vector/beach_features.gpkg", layer="coastlines")
 
+# load imagery
 hwl_sentinel <- hwl[which(hwl$image_source == 'sentinel'),]
 
 
-# Analysis ----------------------------------------------------------------
 
-# construct a baseline from the first and last vertexes of the HWL
-
-latlong <- geom(hwl_sentinel)[c(1, dim(geom(hwl_sentinel))[1]), 3:4]
-
-wkt_baseline <- paste0("LINESTRING(", latlong[1,1], " ", latlong[1,2], ", ", latlong[2,1], " ", latlong[2,2], ")")
-
-baseline <- vect(wkt_baseline, crs="EPSG:32611")
-
-# construct the transects: https://github.com/paulhegedus/SampleBuilder/ <- requires saving shapefiles... boo.
-# Make your own: https://stackoverflow.com/questions/74844804/finding-a-set-of-equally-spaced-perpendicular-lines-along-boundaries-in-r 
-
-# make points along a line to use as the starting point for transects:
-# terra::densify(line,interval =min(res(r))/2, flat=TRUE)
+# define color palettes
+pal <- colorRampPalette(c("lightblue", "purple4"))
+diverging_pal <-colorRampPalette(c("lightblue", "white", "black"))
+red_black_pal <- colorRampPalette(c("darkred", "white", "black"))
 
 
 
+# Functions ---------------------------------------------------------------
 # FUNCTION construct_transects()
 #     baseline = a line (a terra spatVector) composed of two vertexes (start and end) representing the line for constructing transects perpendicular to
 #     transect_spacing = the distance between transects (meters for latlon, crs units for other projections)
@@ -105,6 +101,24 @@ construct_transects <- function(baseline, transect_spacing, transect_length){
 
 
 
+# Transects ----------------------------------------------------------------
+
+# construct a baseline from the first and last vertexes of the HWL
+
+latlong <- geom(hwl_sentinel)[c(1, dim(geom(hwl_sentinel))[1]), 3:4]
+
+wkt_baseline <- paste0("LINESTRING(", latlong[1,1], " ", latlong[1,2], ", ", latlong[2,1], " ", latlong[2,2], ")")
+
+baseline <- vect(wkt_baseline, crs="EPSG:32611")
+
+# construct the transects: https://github.com/paulhegedus/SampleBuilder/ <- requires saving shapefiles... boo.
+# Make your own: https://stackoverflow.com/questions/74844804/finding-a-set-of-equally-spaced-perpendicular-lines-along-boundaries-in-r 
+
+# make points along a line to use as the starting point for transects:
+# terra::densify(line,interval =min(res(r))/2, flat=TRUE)
+
+
+
 # use my construct_transect() function to make transects based on the baseline
 transects <- construct_transects(baseline=baseline, transect_spacing = 100, transect_length = 200)
 
@@ -139,27 +153,11 @@ transect_slopes <- extract(
   y = transects_points
 )
 
-# topographic position index
-#     Reference: https://blogs.ubc.ca/tdeenik/2021/02/16/topographic-position-index-tpi/
-#     GDAL/terra uses a 3x3 window and you can't change it - small windows are good for identifying small features
-#     Reference: https://landscapearchaeology.org/2019/tpi/ 
-#     TPI is equivalent to a local relief model (LRM)
-tpi <- terrain(dem, v="TPI")
-
 # join the points to the elevation data (why wouldn't it keep the previous attributes?)
 transects_points$elevations <- transect_elevations$Layer_1
 transects_points$slopes <- transect_slopes$slope
 
 # calculate the elevation change between points heading inland on the transects
-
-
-#plotting to check results
-
-# define color palettes
-pal <- colorRampPalette(c("lightblue", "purple4"))
-diverging_pal <-colorRampPalette(c("lightblue", "white", "black"))
-
-red_black_pal <- colorRampPalette(c("darkred", "white", "black"))
 
 
 plotRGB(
@@ -173,8 +171,7 @@ plotRGB(
 plot(transects_points, "elevations", cex=.5, col=pal(25), add=TRUE)
 plot(transects_points, "slopes", cex=.5, col=pal(25))
 
-plot(tpi, col=diverging_pal(25))
-plot(tpi, col=red_black_pal(25))
+
 
 # calculate the distance to the water line
 dist_hwl <- distance(x=dem, y=hwl_sentinel)
@@ -182,7 +179,32 @@ dist_hwl <- distance(x=dem, y=hwl_sentinel)
 # calculate the change in slope and find the points of inflection
 
 
+
+# TPI ---------------------------------------------------------------------
+
+
+# topographic position index
+#     Reference: https://blogs.ubc.ca/tdeenik/2021/02/16/topographic-position-index-tpi/
+#     GDAL/terra uses a 3x3 window and you can't change it - small windows are good for identifying small features
+#     Reference: https://landscapearchaeology.org/2019/tpi/ 
+#     TPI is equivalent to a local relief model (LRM)
+
+tpi <- terrain(dem, v="TPI")
+
+
+# Plots
+plot(tpi, col=diverging_pal(25))
+plot(tpi, col=red_black_pal(25))
+
+
+
 terra::contour(tpi)
+
+
+
+# Clusters ----------------------------------------------------------------
+
+
 
 # Clusters with TPI and elevation
 # https://stackoverflow.com/questions/76323195/clustering-a-spatial-raster-stack

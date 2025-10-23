@@ -193,12 +193,46 @@ tpi <- terrain(dem, v="TPI")
 
 
 # Plots
-plot(tpi, col=diverging_pal(25))
+#plot(tpi, col=diverging_pal(25))
 plot(tpi, col=red_black_pal(25))
 
 
+# reclassify TPI into features
 
-terra::contour(tpi)
+# format: from | to | becomes   OR   is | becomes
+reclass_matrix <- matrix(c(
+  -1, -0.1, 1,  #pit/big transition
+  -0.1, 0.008, 2,   #flat
+  0.008, 0.5, 3    #dune
+), ncol=3, byrow = TRUE)    
+
+# classify the TPI raster
+dune_class <- classify(x=tpi, rcl=reclass_matrix)
+
+plot(dune_class, col=c("black", "white", "cornsilk2", "blueviolet"))
+
+par(mfrow=c(1,2))
+plot(tpi, col=red_black_pal(25), main="TPI")
+plot(dune_class, col=c("black", "white", "blueviolet"), main="Classified TPI")
+par(mfrow=c(1,1))
+
+# crop to beach polygons
+# load analysis_vegetation.R first
+tpi_crop <- crop(tpi, beach_sentinel, mask=TRUE)
+dune_class_crop <- crop(dune_class, beach_sentinel, mask=TRUE)
+
+tpi_cropped_resampled <-resample(tpi_crop, ndvi_sentinel_crop, method = "near")
+dune_class_cropped_resampled <-resample(dune_class, ndvi_sentinel_crop, method = "near")
+
+tpi_ndvi <- c(tpi_cropped_resampled, ndvi_sentinel_crop)
+dune_ndvi <- c(dune_class_cropped_resampled, ndvi_sentinel_crop)
+
+#correlation
+tpi_correlation <- layerCor(tpi_ndvi, fun= "cor")
+dune_correlation <- layerCor(dune_ndvi, fun= "cor")
+
+
+#terra::contour(tpi)
 
 
 

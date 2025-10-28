@@ -38,6 +38,7 @@ aoi <- vect("data/vector/area_of_interest.gpkg")
 # Satellite Imagery
 #     Note: both sentinel and planet data are in EPSG 32611 = WGS84/UTM Zone 11 N
 sentinel <- rast("data/imagery/s2-2018-07-11.tif")
+sentinel60 <- rast("data/imagery/s2-2018-07-11-60m-grids.tif")
 
 #plotRGB(x = sentinel, r=4, g=3, b=2, stretch="lin")
 

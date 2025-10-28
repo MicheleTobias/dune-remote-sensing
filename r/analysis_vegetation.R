@@ -100,3 +100,20 @@ plot(reclass_ndvi_planet, col = c("lightpink", "hotpink"), main="Planet", legend
 par(mfrow=c(1, 2))
 plot(ndvi_sentinel_crop, title="Sentinel NDVI")
 plot(ndvi_planet_crop, title="Planet NDVI")
+
+
+# Cactus Index ------------------------------------------------------------
+# the NDVI calculation is the same formula, we'll just use different bands
+# this will only work with Sentinel because it has the band resolution to match the bands used in the original Cactus Index
+
+cactus1 <- ndvi(nir = sentinel$B8A,
+                red = sentinel60$B09)
+#cactus2 <- ndvi(nir = sentinel$`s2-2018-07-11_10`,red = sentinel$`s2-2018-07-11_9`)
+
+cactus1_crop <- crop(cactus1, beach_sentinel, mask=TRUE)
+
+par(mfrow=c(1,2))
+plot(cactus1_crop, main = "Cacti 1 Index")
+#plot(cactus2, main = "Cacti 2 Index")
+plot(ndvi_sentinel_crop, main="Sentinel NDVI")
+par(mfrow=c(1,1))

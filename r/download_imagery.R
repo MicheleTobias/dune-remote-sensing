@@ -23,6 +23,7 @@ login()
 
 
 
+
 # Bounding Boxes
 
 #   10 Mile Dunes
@@ -55,6 +56,7 @@ datacube = p$load_collection(
   bands = bands #,
   #max_cloud_cover=30
 )
+f = list_file_formats()
 
 res <- p$save_result(datacube, format = f$output$GTiff)
 file  <- compute_result(graph = res, output_file = "data/imagery/s2-2018-07-11.tif")
@@ -73,7 +75,7 @@ res60 <- q$save_result(datacube60, format = f$output$GTiff)
 #file60 <- compute_result
 file60  <- compute_result(graph = res60, output_file = "data/imagery/s2-2018-07-11-60m-grids.tif")
 
-#f = list_file_formats()
+#
 
 # TODO: make a reduce function to get the 1st time slice
 # since we know there is only 1 we'll just compute the cube and save it

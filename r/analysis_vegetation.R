@@ -40,8 +40,8 @@ beach_planet <- beaches[which(beaches$image_source == 'planet'),]
 
 # Sentinel === red = B04  nir = B08 -> NIR @ 10m resolution
 ndvi_sentinel <- ndvi(
-  red = sentinel$`s2-2018-07-11_4`, 
-  nir = sentinel$`s2-2018-07-11_8`)
+  red = sentinel$B04, 
+  nir = sentinel$B08)
 
 ndvi_planet <- ndvi(
   nir=planet$nir, 
@@ -98,16 +98,19 @@ plot(reclass_ndvi_planet, col = c("lightpink", "hotpink"), main="Planet", legend
 
 # plot NDVI
 par(mfrow=c(1, 2))
-plot(ndvi_sentinel_crop, title="Sentinel NDVI")
-plot(ndvi_planet_crop, title="Planet NDVI")
+plot(ndvi_sentinel_crop, main="Sentinel NDVI")
+plot(ndvi_planet_crop, main="Planet NDVI")
 
 
 # Cactus Index ------------------------------------------------------------
 # the NDVI calculation is the same formula, we'll just use different bands
 # this will only work with Sentinel because it has the band resolution to match the bands used in the original Cactus Index
 
+# match the grids for both sets of sentinel data
+sentinel60_resampled <- resample(sentinel60, sentinel)
+
 cactus1 <- ndvi(nir = sentinel$B8A,
-                red = sentinel60$B09)
+                red = sentinel60_resampled$B09)
 #cactus2 <- ndvi(nir = sentinel$`s2-2018-07-11_10`,red = sentinel$`s2-2018-07-11_9`)
 
 cactus1_crop <- crop(cactus1, beach_sentinel, mask=TRUE)

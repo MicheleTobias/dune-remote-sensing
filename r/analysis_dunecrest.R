@@ -194,7 +194,7 @@ tpi <- terrain(dem, v="TPI")
 
 # Plots
 #plot(tpi, col=diverging_pal(25))
-plot(tpi, col=red_black_pal(25))
+plot(tpi, col=red_black_pal(25), main = "Topographic Position Index (TPI)")
 
 
 # reclassify TPI into features
